@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public class StudentDAOImpl implements StudentDAO {
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     public StudentDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -17,14 +17,16 @@ public class StudentDAOImpl implements StudentDAO {
 
     @Override
     @Transactional
-    public void save(Student theStudent) {
+    public Student save(Student theStudent) {
         entityManager.persist(theStudent);
+        return theStudent;
     }
 
     @Override
     @Transactional
-    public void update(Student theStudent) {
+    public Student update(Student theStudent) {
         entityManager.merge(theStudent);
+        return theStudent;
     }
 
     @Override
@@ -36,15 +38,18 @@ public class StudentDAOImpl implements StudentDAO {
     public List<Student> findAll() {
         TypedQuery<Student> theQuery = entityManager.createQuery("FROM Student", Student.class);
 
-        return theQuery.getResultList();
+        List<Student> students = theQuery.getResultList();
+
+        return students;
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public Student deleteById(Long id) {
         Student student = entityManager.find(Student.class, id);
         if (student != null) {
             entityManager.remove(student);
         }
+        return student;
     }
 }
